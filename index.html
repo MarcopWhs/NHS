@@ -264,6 +264,13 @@
     gap: 16px;
     flex-wrap: wrap;
   }
+  .btn-primary, .btn-ghost{
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    display: inline-block;
+  }
   .btn-primary{
     background: var(--red);
     color:#fff;
@@ -276,6 +283,7 @@
   }
   .btn-primary:hover{ background:#c81f30; border-color:#c81f30; }
   .btn-ghost{
+    background: transparent;
     padding: 14px 26px;
     font-size: 15px;
     font-weight: 500;
@@ -732,42 +740,44 @@
     </div>
     <div class="price-grid">
       <div class="price-card">
-        <div class="tier">Base</div>
-        <div class="price">€9<small>/mês</small></div>
+        <div class="tier">Basic</div>
+        <div class="price">€9.99<small>/mês</small></div>
         <div class="desc">Para servidores pequenos a testar o scanner.</div>
         <ul>
-          <li>Até 32 jogadores simultâneos</li>
-          <li>Deteção de movimento e teleporte</li>
-          <li>Alertas no Discord</li>
-          <li>Histórico de 7 dias</li>
+          <li>5000+ Detections</li>
+          <li>Huge Client Detections</li>
+          <li>Unlimited Scans and Indepth Analysis</li>
+          <li>24/7 Support</li>
+          <li>Basic API Access</li>
         </ul>
-        <button class="btn-ghost cta-plan" data-plan="Base" style="text-align:center;" type="button">Escolher Base</button>
+        <button class="btn-ghost cta-plan" data-plan="Basic" style="text-align:center;" type="button">Escolher Basic</button>
       </div>
       <div class="price-card featured">
         <div class="badge">MAIS ESCOLHIDO</div>
-        <div class="tier">Comunidade</div>
-        <div class="price">€24<small>/mês</small></div>
+        <div class="tier">Advanced</div>
+        <div class="price">€24.99<small>/mês</small></div>
         <div class="desc">Para servidores em crescimento com staff ativa.</div>
         <ul>
-          <li>Até 128 jogadores simultâneos</li>
-          <li>Deteção completa (movimento, inventário, economia)</li>
-          <li>Alertas no Discord + painel web</li>
-          <li>Histórico de 90 dias</li>
-          <li>Regras configuráveis por servidor</li>
+          <li>5000+ Detections</li>
+          <li>Huge Client Detections</li>
+          <li>Unlimited Scans and Indepth Analysis</li>
+          <li>24/7 Support</li>
+          <li>FULL API Access</li>
         </ul>
-        <button class="btn-primary cta-plan" data-plan="Comunidade" style="text-align:center;" type="button">Escolher Comunidade</button>
+        <button class="btn-primary cta-plan" data-plan="Advanced" style="text-align:center;" type="button">Escolher Advanced</button>
       </div>
       <div class="price-card">
-        <div class="tier">Rede</div>
-        <div class="price">Sob consulta</div>
+        <div class="tier">Professional</div>
+        <div class="price">€70<small>vitalício</small></div>
         <div class="desc">Para redes com múltiplos servidores.</div>
         <ul>
-          <li>Jogadores ilimitados</li>
-          <li>Multi-servidor num único painel</li>
-          <li>Histórico ilimitado</li>
-          <li>Suporte prioritário</li>
+          <li>ALL Professional Features</li>
+          <li>5 Enterprise Users</li>
+          <li>Extra Users (£4.99 each)</li>
+          <li>24/7 Support</li>
+          <li>FULL API Access</li>
         </ul>
-        <button class="btn-ghost cta-plan" data-plan="Rede" style="text-align:center;" type="button">Falar connosco</button>
+        <button class="btn-ghost cta-plan" data-plan="Professional" style="text-align:center;" type="button">Escolher Professional</button>
       </div>
     </div>
   </div>
@@ -874,9 +884,9 @@
         <div class="field">
           <label for="fPlan">Plano</label>
           <select id="fPlan" name="plan">
-            <option value="Base">Base — €9/mês</option>
-            <option value="Comunidade">Comunidade — €24/mês</option>
-            <option value="Rede">Rede — sob consulta</option>
+            <option value="Basic">Basic — €9.99/mês</option>
+            <option value="Advanced">Advanced — €24.99/mês</option>
+            <option value="Professional">Professional — €70 vitalício</option>
           </select>
         </div>
         <button type="submit" class="btn-primary">Enviar pedido</button>
