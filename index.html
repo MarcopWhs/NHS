@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NHS SCANNER — Anti-cheat para servidores FiveM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A0A0B;
+    --bg-raised: #141416;
+    --line: #232326;
+    --red: #E8283C;
+    --red-dim: #7A1420;
+    --text: #F2F1EF;
+    --text-dim: #8C8C90;
+    --text-faint: #55555A;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3, .display{
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.05;
+  }
+  a{ color:inherit; text-decoration:none; }
+  img,svg{ display:block; max-width:100%; }
+  .wrap{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  @media(max-width: 720px){ .wrap{ padding:0 20px; } }
+
+  ::selection{ background: var(--red); color:#fff; }
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible{
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(10,10,11,0.86);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding: 20px 0;
+  }
+  .logo{
+    display:flex;
+    align-items:baseline;
+    gap: 2px;
+    font-family:'Barlow Condensed', sans-serif;
+    font-weight:700;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+  }
+  .logo .dot{ color: var(--red); }
+  .nav-links{
+    display:flex;
+    gap: 36px;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+  .nav-links a:hover{ color: var(--text); }
+  .nav-cta{
+    background: var(--red);
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 2px;
+  }
+  .nav-cta:hover{ background:#c81f30; }
+  .menu-toggle{ display:none; background:none; border:none; color:var(--text); font-size:24px; cursor:pointer; line-height:1; }
+
+  @media (max-width: 860px){
+    .nav-links{
+      position: fixed;
+      top: 65px; left:0; right:0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+      flex-direction: column;
+      gap: 0;
+      padding: 8px 0;
+      display: none;
+    }
+    .nav-links.open{ display:flex; }
+    .nav-links a{
+      padding: 14px 24px;
+      border-top: 1px solid var(--line);
+    }
+    #navDesktopActions{ display:none; }
+    .menu-toggle{ display:block; }
+  }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{
+    position: fixed; inset:0;
+    background: rgba(6,6,7,0.78);
+    backdrop-filter: blur(4px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal{
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    max-width: 440px;
+    width:100%;
+    padding: 32px;
+    position: relative;
+  }
+  .modal-close{
+    position:absolute;
+    top: 16px; right: 16px;
+    background:none; border:none;
+    color: var(--text-dim);
+    font-size: 20px;
+    cursor:pointer;
+    line-height:1;
+  }
+  .modal-close:hover{ color: var(--text); }
+  .modal h3{
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  .modal p.sub{
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+  .field{ margin-bottom: 16px; }
+  .field label{
+    display:block;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .field input, .field select{
+    width:100%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 11px 12px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    border-radius: 2px;
+  }
+  .field input:focus, .field select:focus{
+    outline: none;
+    border-color: var(--red);
+  }
+  .modal .btn-primary{
+    width:100%;
+    border:none;
+    margin-top: 6px;
+    font-family:'Inter', sans-serif;
+    cursor:pointer;
+  }
+  .modal-success{
+    display:none;
+    text-align:center;
+    padding: 12px 0;
+  }
+  .modal-success.open{ display:block; }
+  .modal-success .check{
+    width: 48px; height:48px;
+    border-radius:50%;
+    background: rgba(232,40,60,0.12);
+    border: 1px solid var(--red);
+    display:flex; align-items:center; justify-content:center;
+    margin: 0 auto 18px;
+    font-size: 22px;
+    color: var(--red);
+  }
+  .modal-success h3{ font-size:24px; margin-bottom:8px; }
+  .modal-success p{ color:var(--text-dim); font-size:14px; }
+  .modal-form.hidden{ display:none; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    gap: 40px;
+    padding: 100px 0 90px;
+  }
+  @media (max-width: 900px){
+    .hero-grid{ grid-template-columns: 1fr; padding: 60px 0 50px; }
+  }
+
+  .kicker{
+    font-size: 13px;
+    color: var(--red);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin-bottom: 18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .kicker .pulse{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--red);
+    box-shadow: 0 0 0 0 rgba(232,40,60,0.6);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow: 0 0 0 0 rgba(232,40,60,0.5); }
+    70%{ box-shadow: 0 0 0 8px rgba(232,40,60,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(232,40,60,0); }
+  }
+
+  .hero h1{
+    font-size: 68px;
+    max-width: 620px;
+  }
+  @media (max-width: 720px){ .hero h1{ font-size: 44px; } }
+  .hero h1 span{ color: var(--red); }
+
+  .hero p.lead{
+    margin-top: 22px;
+    font-size: 17px;
+    color: var(--text-dim);
+    max-width: 480px;
+  }
+
+  .hero-actions{
+    margin-top: 34px;
+    display:flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .btn-primary{
+    background: var(--red);
+    color:#fff;
+    padding: 14px 26px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 2px;
+    border: 1px solid var(--red);
+    transition: background 0.15s ease;
+  }
+  .btn-primary:hover{ background:#c81f30; border-color:#c81f30; }
+  .btn-ghost{
+    padding: 14px 26px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 2px;
+    border: 1px solid var(--line);
+    color: var(--text);
+    transition: border-color 0.15s ease;
+  }
+  .btn-ghost:hover{ border-color: var(--text-dim); }
+
+  .hero-stats{
+    display:flex;
+    gap: 40px;
+    margin-top: 56px;
+  }
+  .hero-stats div{ border-left: 1px solid var(--line); padding-left: 16px; }
+  .hero-stats .num{
+    font-family:'Barlow Condensed', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .hero-stats .lbl{
+    font-size: 13px;
+    color: var(--text-faint);
+    margin-top: 2px;
+  }
+
+  /* radar visual */
+  .radar-wrap{
+    position: relative;
+    aspect-ratio: 1/1;
+    max-width: 460px;
+    margin: 0 auto;
+  }
+  .radar-ring{
+    position:absolute; inset:0;
+    border-radius:50%;
+    border: 1px solid var(--line);
+  }
+  .radar-ring.r2{ inset: 15%; }
+  .radar-ring.r3{ inset: 32%; }
+  .radar-ring.r4{ inset: 46%; border-color: var(--red-dim); }
+  .radar-crosshair{
+    position:absolute; inset:0;
+  }
+  .radar-crosshair::before, .radar-crosshair::after{
+    content:'';
+    position:absolute;
+    background: var(--line);
+  }
+  .radar-crosshair::before{ left:0; right:0; top:50%; height:1px; }
+  .radar-crosshair::after{ top:0; bottom:0; left:50%; width:1px; }
+  .radar-sweep{
+    position:absolute; inset:0;
+    border-radius:50%;
+    background: conic-gradient(from 0deg, rgba(232,40,60,0.35), rgba(232,40,60,0) 26%);
+    animation: sweep 4s linear infinite;
+  }
+  @keyframes sweep{ to{ transform: rotate(360deg); } }
+  .radar-blip{
+    position:absolute;
+    width:7px; height:7px;
+    border-radius:50%;
+    background: var(--red);
+    box-shadow: 0 0 10px 2px rgba(232,40,60,0.7);
+  }
+  .radar-tag{
+    position:absolute;
+    font-size: 11px;
+    font-family:'Barlow Condensed', sans-serif;
+    letter-spacing:0.05em;
+    color: var(--text-dim);
+    background: var(--bg);
+    padding: 2px 6px;
+    border: 1px solid var(--line);
+    white-space: nowrap;
+  }
+
+  /* ---------- LOGOS / TRUST BAR ---------- */
+  .trust-bar{
+    border-bottom: 1px solid var(--line);
+    padding: 28px 0;
+  }
+  .trust-bar .wrap{
+    display:flex;
+    align-items:center;
+    gap: 28px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .trust-bar .label{
+    font-size: 12px;
+    color: var(--text-faint);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .trust-list{
+    display:flex;
+    gap: 36px;
+    flex-wrap: wrap;
+    color: var(--text-faint);
+    font-family:'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  /* ---------- SECTION HEADER ---------- */
+  section{ padding: 96px 0; border-bottom: 1px solid var(--line); }
+  .sec-head{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 56px;
+  }
+  @media (max-width: 800px){ .sec-head{ grid-template-columns: 1fr; gap:16px; } }
+  .sec-head h2{ font-size: 40px; }
+  .sec-head p{ color: var(--text-dim); font-size: 15px; align-self:end; }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  @media (max-width: 800px){ .steps{ grid-template-columns: 1fr; } }
+  .step{
+    padding: 32px 28px 32px 0;
+    border-right: 1px solid var(--line);
+  }
+  .step:last-child{ border-right:none; }
+  @media (max-width: 800px){
+    .step{ border-right:none; border-bottom: 1px solid var(--line); padding: 28px 0; }
+    .step:last-child{ border-bottom:none; }
+  }
+  .step .idx{
+    font-family:'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    color: var(--red);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .step h3{ font-size: 24px; margin-bottom: 10px; font-weight:500; }
+  .step p{ color: var(--text-dim); font-size: 14.5px; }
+
+  /* ---------- FEATURES ---------- */
+  .feat-grid{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  @media (max-width: 700px){ .feat-grid{ grid-template-columns: 1fr; } }
+  .feat{
+    background: var(--bg);
+    padding: 34px;
+  }
+  .feat h3{
+    font-size: 21px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .feat h3::before{
+    content:'';
+    width: 8px; height: 8px;
+    background: var(--red);
+  }
+  .feat p{ color: var(--text-dim); font-size: 14.5px; max-width: 42ch; }
+
+  /* ---------- PRICING ---------- */
+  .price-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  @media (max-width: 900px){ .price-grid{ grid-template-columns: 1fr; } }
+  .price-card{
+    border: 1px solid var(--line);
+    padding: 32px 28px;
+    display:flex;
+    flex-direction: column;
+  }
+  .price-card.featured{
+    border-color: var(--red);
+    background: linear-gradient(180deg, rgba(232,40,60,0.06), transparent 40%);
+    position: relative;
+  }
+  .price-card.featured .badge{
+    position:absolute;
+    top:-1px; right: -1px;
+    background: var(--red);
+    color:#fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 12px;
+    letter-spacing: 0.04em;
+  }
+  .price-card .tier{
+    font-family:'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .price-card .price{
+    font-family:'Barlow Condensed', sans-serif;
+    font-size: 44px;
+    font-weight: 700;
+    margin: 14px 0 4px;
+  }
+  .price-card .price small{
+    font-size: 15px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+  .price-card .desc{
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+  .price-card ul{
+    list-style:none;
+    margin-bottom: 28px;
+    flex-grow:1;
+  }
+  .price-card li{
+    font-size: 14px;
+    color: var(--text);
+    padding: 9px 0;
+    border-top: 1px solid var(--line);
+    display:flex;
+    gap: 10px;
+  }
+  .price-card li::before{
+    content:'—';
+    color: var(--red);
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq-list{ border-top: 1px solid var(--line); }
+  .faq-item{ border-bottom: 1px solid var(--line); }
+  .faq-q{
+    width:100%;
+    text-align:left;
+    background:none;
+    border:none;
+    color: var(--text);
+    padding: 24px 0;
+    font-size: 17px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap: 20px;
+  }
+  .faq-q .plus{
+    font-family:'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    color: var(--red);
+    transition: transform 0.2s ease;
+    flex-shrink:0;
+  }
+  .faq-item[open] .plus{ transform: rotate(45deg); }
+  .faq-a{
+    padding-bottom: 24px;
+    color: var(--text-dim);
+    font-size: 14.5px;
+    max-width: 68ch;
+  }
+  .faq-q::-webkit-details-marker{ display:none; }
+
+  /* ---------- CTA BAND ---------- */
+  .cta-band{
+    padding: 90px 0;
+    text-align:center;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(232,40,60,0.10), transparent 60%);
+  }
+  .cta-band h2{ font-size: 42px; max-width: 640px; margin: 0 auto 18px; }
+  .cta-band p{ color: var(--text-dim); margin-bottom: 34px; }
+
+  /* ---------- FOOTER ---------- */
+  footer{ padding: 56px 0 40px; }
+  .foot-grid{
+    display:grid;
+    grid-template-columns: 1.4fr repeat(3, 1fr);
+    gap: 32px;
+    margin-bottom: 48px;
+  }
+  @media (max-width: 760px){ .foot-grid{ grid-template-columns: 1fr 1fr; } }
+  .foot-grid h4{
+    font-size: 13px;
+    color: var(--text-faint);
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+    font-weight: 500;
+    font-family:'Inter', sans-serif;
+  }
+  .foot-grid ul{ list-style:none; }
+  .foot-grid li{ margin-bottom: 10px; }
+  .foot-grid a{ color: var(--text-dim); font-size: 14px; }
+  .foot-grid a:hover{ color: var(--text); }
+  .foot-bottom{
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-faint);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="logo">NHS<span class="dot">·</span>SCANNER</div>
+      <div class="nav-links" id="navLinks">
+        <a href="#como-funciona" class="nav-link">Como funciona</a>
+        <a href="#funcionalidades" class="nav-link">Funcionalidades</a>
+        <a href="#precos" class="nav-link">Preços</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="https://discord.gg/YdaQCPTEVu" target="_blank" rel="noopener noreferrer" class="nav-link">Discord</a>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;" id="navDesktopActions">
+        <a href="https://discord.gg/YdaQCPTEVu" target="_blank" rel="noopener noreferrer" class="btn-ghost" id="discordNav" style="padding:10px 18px; font-size:14px;">Discord</a>
+        <button class="nav-cta" id="ctaNav" type="button">Pedir acesso</button>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false" type="button">☰</button>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" style="border-bottom:1px solid var(--line); padding:0;">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker"><span class="pulse"></span>DETEÇÃO ATIVA — SERVIDORES FIVEM</div>
+      <h1>Trapaças não sobrevivem <span>ao scanner.</span></h1>
+      <p class="lead">NHS Scanner monitoriza o comportamento dos jogadores em tempo real e sinaliza padrões de trapaça no teu servidor FiveM — antes que estraguem a experiência da tua comunidade.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" id="ctaHero" type="button">Pedir acesso</button>
+        <a href="#como-funciona" class="btn-ghost">Ver como funciona</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="num">24/7</div><div class="lbl">monitorização ativa</div></div>
+        <div><div class="num">100%</div><div class="lbl">server-side, sem instalar nada no PC do jogador</div></div>
+      </div>
+    </div>
+    <div class="radar-wrap" aria-hidden="true">
+      <div class="radar-ring"></div>
+      <div class="radar-ring r2"></div>
+      <div class="radar-ring r3"></div>
+      <div class="radar-ring r4"></div>
+      <div class="radar-crosshair"></div>
+      <div class="radar-sweep"></div>
+      <div class="radar-blip" style="top:22%; left:64%;"></div>
+      <div class="radar-blip" style="top:58%; left:30%;"></div>
+      <div class="radar-blip" style="top:70%; left:72%;"></div>
+      <div class="radar-tag" style="top:16%; left:66%;">velocidade anómala</div>
+      <div class="radar-tag" style="top:52%; left:6%;">teleporte</div>
+      <div class="radar-tag" style="top:76%; left:60%;">spawn de item</div>
+    </div>
+  </div>
+</section>
+
+<div class="trust-bar">
+  <div class="wrap">
+    <span class="label">USADO POR COMUNIDADES FIVEM DE</span>
+    <div class="trust-list">
+      <span>Roleplay</span>
+      <span>Economia</span>
+      <span>PvP</span>
+      <span>Whitelist</span>
+      <span>Hardcore RP</span>
+    </div>
+  </div>
+</div>
+
+<section id="como-funciona">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Deteção pelo comportamento, não pela invasão.</h2>
+      <p>O scanner analisa o que acontece dentro do jogo — não o que está no computador do jogador. Sem instalar nada no lado do cliente, sem acesso ao sistema de ficheiros.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="idx">01 — INSTALAÇÃO</div>
+        <h3>Adiciona o resource ao teu servidor</h3>
+        <p>Colocas o script na tua pasta de resources e defines as regras que queres monitorizar: velocidade, teleporte, spawn de itens, alterações a stats.</p>
+      </div>
+      <div class="step">
+        <div class="idx">02 — MONITORIZAÇÃO</div>
+        <h3>O scanner observa o servidor em tempo real</h3>
+        <p>Cada evento relevante é comparado com limites e padrões esperados. Quando algo foge do normal, é sinalizado automaticamente.</p>
+      </div>
+      <div class="step">
+        <div class="idx">03 — AÇÃO</div>
+        <h3>Recebes o alerta e decides</h3>
+        <p>Notificação no painel de admin ou no Discord com o jogador, o evento e a evidência. A decisão final — avisar, banir, investigar — é sempre tua.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="funcionalidades">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Feito para admins que já viram de tudo.</h2>
+      <p>Regras configuráveis, histórico completo e alertas que chegam antes do print screen da vítima.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat">
+        <h3>Deteção de velocidade e teleporte</h3>
+        <p>Identifica movimentos impossíveis dentro das regras físicas do jogo, incluindo saltos de posição e aceleração fora do normal.</p>
+      </div>
+      <div class="feat">
+        <h3>Integridade de inventário e economia</h3>
+        <p>Sinaliza spawns de item, alterações de dinheiro ou duplicações que não passam pelos fluxos normais do servidor.</p>
+      </div>
+      <div class="feat">
+        <h3>Alertas no Discord em tempo real</h3>
+        <p>Cada deteção chega ao canal de staff com jogador, timestamp e o evento exato que disparou o alerta.</p>
+      </div>
+      <div class="feat">
+        <h3>Histórico e registo de casos</h3>
+        <p>Todas as deteções ficam guardadas com contexto, para rever antes de tomar qualquer ação disciplinar.</p>
+      </div>
+      <div class="feat">
+        <h3>Regras configuráveis por servidor</h3>
+        <p>Ajustas limites e sensibilidade ao estilo do teu servidor — um servidor de corridas não é um servidor de roleplay pesado.</p>
+      </div>
+      <div class="feat">
+        <h3>Sem instalação no cliente</h3>
+        <p>Corre inteiramente do lado do servidor. Os jogadores não instalam nada, e a privacidade deles não é tocada.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="precos">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Planos por tamanho de comunidade.</h2>
+      <p>Sem taxas escondidas. Cancela quando quiseres.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="tier">Base</div>
+        <div class="price">€9<small>/mês</small></div>
+        <div class="desc">Para servidores pequenos a testar o scanner.</div>
+        <ul>
+          <li>Até 32 jogadores simultâneos</li>
+          <li>Deteção de movimento e teleporte</li>
+          <li>Alertas no Discord</li>
+          <li>Histórico de 7 dias</li>
+        </ul>
+        <button class="btn-ghost cta-plan" data-plan="Base" style="text-align:center;" type="button">Escolher Base</button>
+      </div>
+      <div class="price-card featured">
+        <div class="badge">MAIS ESCOLHIDO</div>
+        <div class="tier">Comunidade</div>
+        <div class="price">€24<small>/mês</small></div>
+        <div class="desc">Para servidores em crescimento com staff ativa.</div>
+        <ul>
+          <li>Até 128 jogadores simultâneos</li>
+          <li>Deteção completa (movimento, inventário, economia)</li>
+          <li>Alertas no Discord + painel web</li>
+          <li>Histórico de 90 dias</li>
+          <li>Regras configuráveis por servidor</li>
+        </ul>
+        <button class="btn-primary cta-plan" data-plan="Comunidade" style="text-align:center;" type="button">Escolher Comunidade</button>
+      </div>
+      <div class="price-card">
+        <div class="tier">Rede</div>
+        <div class="price">Sob consulta</div>
+        <div class="desc">Para redes com múltiplos servidores.</div>
+        <ul>
+          <li>Jogadores ilimitados</li>
+          <li>Multi-servidor num único painel</li>
+          <li>Histórico ilimitado</li>
+          <li>Suporte prioritário</li>
+        </ul>
+        <button class="btn-ghost cta-plan" data-plan="Rede" style="text-align:center;" type="button">Falar connosco</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" style="border-bottom:none;">
+  <div class="wrap">
+    <div class="sec-head" style="margin-bottom:0;">
+      <h2>Perguntas frequentes.</h2>
+      <p></p>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary class="faq-q">O scanner acede a ficheiros no PC do jogador?<span class="plus">+</span></summary>
+        <div class="faq-a">Não. O NHS Scanner corre inteiramente do lado do servidor e analisa apenas eventos e dados do jogo. Não instala nada no computador do jogador nem acede ao sistema de ficheiros dele.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">Preciso de conhecimentos técnicos para instalar?<span class="plus">+</span></summary>
+        <div class="faq-a">Não. A instalação é feita como qualquer resource FiveM: copiar a pasta, adicionar ao server.cfg e ajustar o ficheiro de configuração com as regras que queres ativar.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">O scanner bane jogadores automaticamente?<span class="plus">+</span></summary>
+        <div class="faq-a">Por padrão não. O scanner sinaliza e notifica a staff com o evento e o contexto; a decisão de avisar, investigar ou banir fica sempre com a equipa do servidor. Ações automáticas podem ser ativadas opcionalmente por tipo de deteção.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">Funciona com o meu framework (ESX, QBCore, etc.)?<span class="plus">+</span></summary>
+        <div class="faq-a">Sim, o scanner integra com os frameworks mais comuns do ecossistema FiveM através de eventos padrão. Frameworks personalizados podem precisar de pequenos ajustes de configuração.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">Posso cancelar a qualquer momento?<span class="plus">+</span></summary>
+        <div class="faq-a">Sim. Todos os planos são mensais e sem fidelização — cancelas quando quiseres a partir do painel.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band" style="border-bottom:1px solid var(--line);">
+  <div class="wrap">
+    <h2>Pronto para limpar o teu servidor?</h2>
+    <p>Configura o NHS Scanner em minutos e começa a receber alertas ainda hoje.</p>
+    <button class="btn-primary" id="ctaBand" type="button">Pedir acesso</button>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px;">NHS<span class="dot">·</span>SCANNER</div>
+        <p style="color:var(--text-dim); font-size:14px; max-width:32ch;">Deteção de trapaças server-side para comunidades FiveM.</p>
+      </div>
+      <div>
+        <h4>PRODUTO</h4>
+        <ul>
+          <li><a href="#como-funciona">Como funciona</a></li>
+          <li><a href="#funcionalidades">Funcionalidades</a></li>
+          <li><a href="#precos">Preços</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>SUPORTE</h4>
+        <ul>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="https://discord.gg/YdaQCPTEVu" target="_blank" rel="noopener noreferrer">Discord</a></li>
+          <li><a href="#">Documentação</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>LEGAL</h4>
+        <ul>
+          <li><a href="#">Termos de serviço</a></li>
+          <li><a href="#">Privacidade</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 NHS Scanner. Todos os direitos reservados.</span>
+      <span>Feito para comunidades FiveM.</span>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" aria-label="Fechar">✕</button>
+
+    <div id="modalForm">
+      <h3 id="modalTitle">Pedir acesso</h3>
+      <p class="sub" id="modalSub">Preenche os dados e entramos em contacto com os próximos passos.</p>
+      <form id="accessForm">
+        <input type="text" name="website" id="fWebsite" autocomplete="off" tabindex="-1" style="position:absolute; left:-9999px; width:1px; height:1px; opacity:0;" aria-hidden="true">
+        <div class="field">
+          <label for="fName">Nome</label>
+          <input type="text" id="fName" name="name" required autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="fDiscord">Utilizador do Discord</label>
+          <input type="text" id="fDiscord" name="discord" placeholder="ex: user#0000" required>
+        </div>
+        <div class="field">
+          <label for="fServer">Nome do servidor FiveM</label>
+          <input type="text" id="fServer" name="server" required>
+        </div>
+        <div class="field">
+          <label for="fPlan">Plano</label>
+          <select id="fPlan" name="plan">
+            <option value="Base">Base — €9/mês</option>
+            <option value="Comunidade">Comunidade — €24/mês</option>
+            <option value="Rede">Rede — sob consulta</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-primary">Enviar pedido</button>
+      </form>
+    </div>
+
+    <div class="modal-success" id="modalSuccess">
+      <div class="check">✓</div>
+      <h3>Pedido enviado</h3>
+      <p>Obrigado! A nossa equipa vai contactar-te em breve pelo Discord com os próximos passos.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Mobile menu toggle
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.getElementById('navLinks');
+  menuToggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    menuToggle.textContent = isOpen ? '✕' : '☰';
+  });
+  navLinks.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.textContent = '☰';
+    });
+  });
+
+  // Access modal
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalClose = document.getElementById('modalClose');
+  const modalForm = document.getElementById('modalForm');
+  const modalSuccess = document.getElementById('modalSuccess');
+  const modalSub = document.getElementById('modalSub');
+  const accessForm = document.getElementById('accessForm');
+  const fPlan = document.getElementById('fPlan');
+
+  function openModal(plan){
+    modalForm.style.display = 'block';
+    modalSuccess.classList.remove('open');
+    modalOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (plan){
+      fPlan.value = plan;
+      modalSub.textContent = 'Plano selecionado: ' + plan + '. Preenche os dados para avançar.';
+    } else {
+      modalSub.textContent = 'Preenche os dados e entramos em contacto com os próximos passos.';
+    }
+    document.getElementById('fName').focus();
+  }
+
+  function closeModal(){
+    modalOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('ctaNav').addEventListener('click', () => openModal());
+  document.getElementById('ctaHero').addEventListener('click', () => openModal());
+  document.getElementById('ctaBand').addEventListener('click', () => openModal());
+  document.querySelectorAll('.cta-plan').forEach(btn => {
+    btn.addEventListener('click', () => openModal(btn.dataset.plan));
+  });
+
+  modalClose.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalOverlay.classList.contains('open')) closeModal();
+  });
+
+  const DISCORD_WEBHOOK_URL = 'https://canary.discord.com/api/webhooks/1373314087374557294/wcbyVAiom8xKJ0V8kPOqIqIGTR8Uy_wCAamKkWWlb4Bja9z8m7oA7PsnxRrZ8veaXbu_';
+
+  accessForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const submitBtn = accessForm.querySelector('button[type="submit"]');
+    const originalLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'A enviar...';
+
+    const name = document.getElementById('fName').value.trim();
+    const discord = document.getElementById('fDiscord').value.trim();
+    const server = document.getElementById('fServer').value.trim();
+    const plan = document.getElementById('fPlan').value;
+    const website = document.getElementById('fWebsite').value; // honeypot
+
+    if (website) {
+      // provável bot — finge sucesso sem enviar
+      modalForm.style.display = 'none';
+      modalSuccess.classList.add('open');
+      accessForm.reset();
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+      return;
+    }
+
+    const payload = {
+      embeds: [{
+        title: 'Novo pedido de acesso — NHS Scanner',
+        color: 15216700,
+        fields: [
+          { name: 'Nome', value: name || '—', inline: true },
+          { name: 'Discord', value: discord || '—', inline: true },
+          { name: 'Servidor FiveM', value: server || '—', inline: true },
+          { name: 'Plano', value: plan || '—', inline: true }
+        ],
+        timestamp: new Date().toISOString()
+      }]
+    };
+
+    try {
+      const res = await fetch(DISCORD_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('Webhook respondeu com erro: ' + res.status);
+
+      modalForm.style.display = 'none';
+      modalSuccess.classList.add('open');
+      accessForm.reset();
+    } catch (err) {
+      alert('Não foi possível enviar o pedido. Tenta novamente em instantes.');
+      console.error(err);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+    }
+  });
+</script>
+
+</body>
+</html>
